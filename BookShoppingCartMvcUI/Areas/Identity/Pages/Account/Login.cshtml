@@ -1,0 +1,122 @@
+﻿@* Цей код відповідає за сторінку входу користувача та містить форму для введення облікових даних, 
+а також зовнішні посилання для реєстрації, відновлення паролю та повторної відправки листа для 
+підтвердження електронної пошти. *@
+
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначаєм тип моделі, яка використовується на цій сторінці. *@
+@model LoginModel
+
+@{
+    // Встановлюєм заголовок сторінки у ViewData.
+    ViewData["Title"] = "Log in";
+}
+@* Виводить заголовок сторінки у розділі HTML. Заголовок береться з ViewData, який був встановлений раніше. *@
+<h1>@ViewData["Title"]</h1>
+<div class="row"> @* Визначаєм новий рядок у макеті Bootstrap. *@
+    <div class="col-md-4"> @*Визначамє колонку ширини 4 (md-4) у макеті Bootstrap. *@
+        <section> @* Розпочинає розділ сторінки. *@
+            @* Визначаєм HTML-форму для введення облікових даних користувача для входу. *@
+            <form id="account" method="post"> 
+                <h2>Use a local account to log in.</h2>
+                <hr />
+                @* Виводить повідомлення про помилки валідації, якщо вони виникають під час спроби входу. *@
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                @* Визначає блоки для введення Email і Password з використанням компонентів Bootstrap 
+                для стилізації та взаємодії з користувачем. *@
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                    <label asp-for="Input.Email" class="form-label">Email</label>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <label asp-for="Input.Password" class="form-label">Password</label>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                @* Визначає блок для відзначення опції "Remember Me" для збереження даних входу. *@
+                <div class="checkbox mb-3">
+                    <label asp-for="Input.RememberMe" class="form-label">
+                        <input class="form-check-input" asp-for="Input.RememberMe" />
+                        @Html.DisplayNameFor(m => m.Input.RememberMe)
+                    </label>
+                </div>
+                <div>
+                    @* Кнопка для відправки форми та входу. *@
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                </div>
+                @* Блок із зовнішніми посиланнями, такими як "Forgot your password?", 
+                "Register as a new user", "Resend email confirmation". *@
+                <div>
+                    <p>
+                        @* Посилання на сторінку для відновлення паролю (якщо користувач забув пароль). *@
+                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                    </p>
+                    <p>
+                        @* Посилання на сторінку реєстрації нового користувача. *@
+                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                    </p>
+                    <p>
+                        @* Посилання на сторінку для повторної відправки листа для 
+                        підтвердження електронної пошти. *@
+                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                    </p>
+                </div>
+            </form>
+        </section>
+    </div>
+    @* Цей блок коду розміщується у шостій колонці (md-6) сітки Bootstrap та
+    відцентровується відносно колонки зправа (md-offset-2). *@
+    <div class="col-md-6 col-md-offset-2">
+        @* Цей блок коду містить відомості про можливість реєстрації через зовнішні сервіси
+        (наприклад, Google, Facebook і т. д.). *@
+        <section>
+            <h3>Use another service to log in.</h3>
+            <hr />
+            @{
+                /* Це умовна конструкція, яка перевіряє, чи існують зовнішні сервіси для реєстрації.
+                Model.ExternalLogins містить інформацію про доступні зовнішні сервіси.Якщо сервісів немає,
+                виводиться відповідне повідомлення.*/
+                if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                {
+                    <div>
+                        <p>
+                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
+                            about setting up this ASP.NET application to support logging in via external services</a>.
+                        </p>
+                    </div>
+                }
+                else //Якщо є доступні зовнішні сервіси, генерується форма для вибору сервісу реєстрації.
+                {
+                    /*id="external-account": Вказує ідентифікатор форми.
+                    asp-page="./ExternalLogin": Вказує URL, на який буде відправлено запит при виборі
+                    зовнішнього сервісу.
+                    asp-route-returnUrl="@Model.ReturnUrl": Вказує URL, на який користувач повернеться
+                    після успішної реєстрації чи входу через зовнішній сервіс.
+                    method="post": Вказує метод відправки форми (в даному випадку, POST).
+                    class="form-horizontal": Додає клас для використання стилів Bootstrap для форми.*/
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                        <div>
+                            <p>
+                                @foreach (var provider in Model.ExternalLogins!)
+                                {
+                                /*Для кожного зовнішнього сервісу генерується кнопка, яка містить ім'я
+                                    * та відображає текст з назвою сервісу. При натисканні на цю кнопку
+                                    * відбувається відправка форми з обраним зовнішнім сервісом для
+                                    * реєстрації чи входу.*/
+                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                }
+                            </p>
+                        </div>
+                    </form>
+                }
+            }
+        </section>
+    </div>
+</div>
+
+@* Ця секція дозволяє вбудовувати скрипти на сторінку. У даному випадку, вставляється частковий вид
+_ValidationScriptsPartial, який містить необхідні скрипти для валідації форми. *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

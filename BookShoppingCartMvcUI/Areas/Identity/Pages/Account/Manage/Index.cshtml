@@ -1,0 +1,47 @@
+﻿@* цей файл призначений для сторінки управління обліковим записом користувача. *@
+
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначаєм тип моделі, яка використовується на цій сторінці. *@
+@model IndexModel
+@{
+    // Ці значення використовуються для визначення заголовку та активної сторінки.
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+@*  Виводим заголовок сторінки. *@
+<h3>@ViewData["Title"]</h3>
+@* Вставляєм частковий вид для відображення повідомлень статусу. *@
+<partial name="_StatusMessage" for="StatusMessage" />
+
+@* Визначає новий рядок у макеті Bootstrap. *@
+<div class="row">
+    <div class="col-md-6">@* Визначає колонку ширини 6 (md-6) у макеті Bootstrap. *@
+        @* Визначає форму з ідентифікатором "profile-form" та методом передачі POST. *@
+        <form id="profile-form" method="post">
+            @* Виводить блок для валідації моделі, який покаже повідомлення про помилки вводу. *@
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            @* Створює блок для введення ім'я користувача. Використовує клас form-floating з Bootstrap 
+            для стилізації та ефекту "плаваючого" тексту у введенні. Виводить поле введення для ім'я 
+            користувача, його мітку та встановлює його в стан відключення (disabled), щоб воно було 
+            недоступним для редагування. *@
+            <div class="form-floating mb-3">
+                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
+                <label asp-for="Username" class="form-label"></label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
+                <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+            @* Виводить кнопку для відправлення форми та оновлення профілю.  *@
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@* Ця секція дозволяє вбудовувати скрипти на сторінку. У даному випадку, вставляється частковий вид
+_ValidationScriptsPartial, який містить необхідні скрипти для валідації форми. *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

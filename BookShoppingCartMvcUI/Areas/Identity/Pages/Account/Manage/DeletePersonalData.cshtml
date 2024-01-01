@@ -1,0 +1,59 @@
+﻿@* Ця сторінка дозволяє користувачам видалити свої особисті дані та 
+закрити обліковий запис після введення пароля. *@
+
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначаєм тип моделі, яка використовується на цій сторінці. *@
+@model DeletePersonalDataModel
+@{
+    // Ці значення використовуються для визначення заголовку та активної сторінки.
+    ViewData["Title"] = "Delete Personal Data";
+    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+}
+@*  Виводим заголовок сторінки. *@
+<h3>@ViewData["Title"]</h3>
+
+@* Цей блок коду створює візуальний елемент для відображення попередження. Класи "alert" та "alert-warning" 
+вказують на те, що це повідомлення є попередженням, а жовтий колір зазвичай асоціюється із попередженням. *@
+<div class="alert alert-warning" role="alert">
+    <p>
+        @* Пояснюється, що видалення цих даних назавжди призведе до закриття облікового запису, 
+        і це дію не можна буде відновити. *@
+        <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+    </p>
+</div>
+
+<div>
+    @* Розпочинається форма для відправлення POST-запиту на сервер. *@
+    <form id="delete-user" method="post">
+        @* Цей блок відповідає за відображення валідаційних помилок. Використовує атрибут 
+        asp-validation-summary="ModelOnly", 
+        щоб відобразити тільки валідаційні помилки, пов'язані з моделлю. *@
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+        @* перевіряє, чи вимагається пароль для видалення даних. Якщо так, то виводиться 
+        блок коду, який містить поле введення пароля. *@
+        @if (Model.RequirePassword)
+        {
+            @* Цей блок визначає контейнер для поля введення пароля. 
+            Клас "form-floating" вказує, що це поле вводу має плаваючий ефект *@
+            <div class="form-floating mb-3">
+                @* Це поле введення пароля. Атрибут asp-for="Input.Password" зв'язує його з властивістю 
+                Password моделі. autocomplete="current-password" вказує на те, що це поле призначене 
+                для введення поточного пароля. *@
+                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your password." />
+                @* Ця мітка пов'язана з полем введення пароля і відображає текстову інформацію біля поля. *@
+                <label asp-for="Input.Password" class="form-label"></label>
+                @* Виводить валідаційні повідомлення для поля введення пароля у випадку помилок. *@
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+        }
+        @* Створює кнопку для відправлення форми. Ця кнопка має червоний колір ("btn-danger") *@
+        <button class="w-100 btn btn-lg btn-danger" type="submit">Delete data and close my account</button>
+    </form>
+</div>
+
+@* Ця секція дозволяє вбудовувати скрипти на сторінку. У даному випадку, вставляється частковий вид
+_ValidationScriptsPartial, який містить необхідні скрипти для валідації форми. *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

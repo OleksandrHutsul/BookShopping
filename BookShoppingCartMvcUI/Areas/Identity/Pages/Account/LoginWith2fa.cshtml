@@ -1,0 +1,57 @@
+﻿@* Цей файл є частиною сторінок для введення двофакторного аутентифікаційного коду користувача *@
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначаєм тип моделі, яка використовується на цій сторінці. *@
+@model LoginWith2faModel
+@{
+    // Встановлюєм заголовок сторінки у ViewData.
+    ViewData["Title"] = "Two-factor authentication";
+}
+@* Виводить заголовок сторінки у розділі HTML. Заголовок береться з ViewData, який був встановлений раніше. *@
+<h1>@ViewData["Title"]</h1>
+<hr /> @* Горизонтальна лінія для розділення елементів на сторінці. *@
+@* Пояснює користувачеві, що його вхід захищений додатком аутентифікації та 
+йому потрібно ввести двофакторний код. *@
+<p>Your login is protected with an authenticator app. Enter your authenticator code below.</p>
+<div class="row"> @* Визначає новий рядок у макеті Bootstrap. *@
+    <div class="col-md-4"> @* Визначає колонку ширини 4 (md-4) у макеті Bootstrap. *@
+        @* Визначає HTML-форму для введення двофакторного аутентифікаційного коду. *@
+        <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+            @* Приховане поле для передачі інформації про те, чи запам'ятовувати користувача. *@
+            <input asp-for="RememberMe" type="hidden" />
+            @* Виводить повідомлення про помилки валідації, якщо вони виникають під час 
+            введення двофакторного аутентифікаційного коду. *@
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            @* Визначає блок для введення двофакторного аутентифікаційного коду. *@
+            <div class="form-floating mb-3">
+                <input asp-for="Input.TwoFactorCode" class="form-control" autocomplete="off" />
+                <label asp-for="Input.TwoFactorCode" class="form-label"></label>
+                <span asp-validation-for="Input.TwoFactorCode" class="text-danger"></span>
+            </div>
+            @* Визначає блок для відзначення опції "Remember Machine" для збереження 
+            даних входу на цьому пристрої. *@
+            <div class="checkbox mb-3">
+                <label asp-for="Input.RememberMachine" class="form-label">
+                    <input asp-for="Input.RememberMachine" />
+                    @Html.DisplayNameFor(m => m.Input.RememberMachine)
+                </label>
+            </div>
+            <div>
+                @* Кнопка для відправки форми та входу. *@
+                <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+            </div>
+        </form>
+    </div>
+</div>
+@* Пояснення про можливість входу за допомогою коду відновлення, якщо користувач не має 
+доступу до аутентифікаційного пристрою. *@
+<p>
+    Don't have access to your authenticator device? You can
+    <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-returnUrl="@Model.ReturnUrl">log in with a recovery code</a>.
+</p>
+
+@* Ця секція дозволяє вбудовувати скрипти на сторінку. У даному випадку, вставляється частковий вид
+_ValidationScriptsPartial, який містить необхідні скрипти для валідації форми. *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

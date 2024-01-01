@@ -1,0 +1,46 @@
+﻿@* Цей файл призначений для сторінки, на якій користувач може скинути ключ аутентифікатора 
+(наприклад, мобільний аутентифікатор), який використовується для двофакторної аутентифікації. *@
+
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначаєм тип моделі, яка використовується на цій сторінці. *@
+@model ResetAuthenticatorModel
+@{
+    // Ці значення використовуються для визначення заголовку та активної сторінки.
+    ViewData["Title"] = "Reset authenticator key";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+@* Вставляєм частковий вид для відображення повідомлень статусу. *@
+<partial name="_StatusMessage" for="StatusMessage" />
+@*  Виводим заголовок сторінки. *@
+<h3>@ViewData["Title"]</h3>
+
+@* Виводить блок з попередженням (жовтий фон), який вказує на важливу інформацію або можливий ризик. *@
+<div class="alert alert-warning" role="alert">
+    <p>
+        @* Виводить значок попередження (жовтий знак оклику) за допомогою Glyphicons *@
+        <span class="glyphicon glyphicon-warning-sign"></span>
+        @* текст, який повідомляє користувачеві, що якщо він скине ключ аутентифікатора, його 
+        аутентифікаційний додаток не буде працювати, поки він не переконфігурує його. *@
+        <strong>If you reset your authenticator key your authenticator app will not work until you reconfigure it.</strong>
+    </p>
+    <p>
+        @* Повідомляє, що цей процес вимикає двофакторну аутентифікацію (2FA) до тих пір, поки 
+        користувач не підтвердить конфігурацію свого аутентифікаційного додатка. Також попереджує 
+        про можливу втрату доступу до облікового запису, якщо конфігурація аутентифікаційного 
+        додатка не буде завершена. *@
+        This process disables 2FA until you verify your authenticator app.
+        If you do not complete your authenticator app configuration you may lose access to your account.
+    </p>
+</div>
+
+@* Створює контейнер для форми. *@
+<div>
+    @* Визначає форму для скидання ключа аутентифікатора. Використовується метод POST. *@
+    <form id="reset-authenticator-form" method="post">
+        @* Кнопка для відправки форми і скидання ключа аутентифікатора. Має червоний 
+        колір (btn-danger) для візуальної індикації ризику *@
+        <button id="reset-authenticator-button" class="btn btn-danger" type="submit">Reset authenticator key</button>
+    </form>
+</div>

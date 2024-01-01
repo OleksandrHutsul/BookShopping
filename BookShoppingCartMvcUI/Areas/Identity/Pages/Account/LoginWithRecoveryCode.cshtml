@@ -1,0 +1,42 @@
+﻿@* Цей файл  є сторінкою для підтвердження входу за допомогою коду відновлення. *@
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначає тип моделі, яка використовується на цій сторінці. *@
+@model LoginWithRecoveryCodeModel
+@{
+    // Встановлює заголовок сторінки у ViewData.
+    ViewData["Title"] = "Recovery code verification";
+}
+@* Виводить заголовок сторінки у розділі HTML. Заголовок береться з ViewData, який був встановлений раніше. *@
+<h1>@ViewData["Title"]</h1>
+<hr /> @* Горизонтальна лінія для розділення елементів на сторінці. *@
+@* Пояснення для користувача про те, що він намагається увійти за допомогою коду відновлення, 
+який не буде запам'ятований, поки він не надасть код аутентифікатора при наступному вході 
+або не вимкне двофакторну аутентифікацію (2FA) і не ввійде знову. *@
+<p>
+    You have requested to log in with a recovery code. This login will not be remembered until you provide
+    an authenticator app code at log in or disable 2FA and log in again.
+</p>
+<div class="row"> @* Визначає новий рядок у макеті Bootstrap. *@
+    <div class="col-md-4"> @* Визначає колонку ширини 4 (md-4) у макеті Bootstrap. *@
+        <form method="post">  @* Визначає HTML-форму для введення коду відновлення. *@
+            @* Виводить повідомлення про помилки валідації, якщо вони виникають під час
+            введення двофакторного аутентифікаційного коду. *@
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            @* Визначає блок для введення коду відновлення. *@
+            <div class="form-floating mb-3">
+                <input asp-for="Input.RecoveryCode" class="form-control" autocomplete="off" placeholder="RecoveryCode" />
+                <label asp-for="Input.RecoveryCode" class="form-label"></label>
+                <span asp-validation-for="Input.RecoveryCode" class="text-danger"></span>
+            </div>
+            @* Кнопка для відправки форми та входу. *@
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+        </form>
+    </div>
+</div>
+
+@* Ця секція дозволяє вбудовувати скрипти на сторінку. У даному випадку, вставляється частковий вид
+_ValidationScriptsPartial, який містить необхідні скрипти для валідації форми. *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,11 @@
+﻿@*Файл _ValidationScriptsPartial.cshtml зазвичай використовується в ASP.NET Core для включення 
+скриптів валідації на клієнті. У цьому конкретному коді включаються скрипти для jQuery Validation 
+і jQuery Unobtrusive Validation, які забезпечують функціональність валідації форм на стороні клієнта.*@
+
+@*Цей скрипт представляє бібліотеку jQuery Validation, яка дозволяє виконувати валідацію форм на стороні 
+клієнта за допомогою правил, визначених у HTML-розмітці форми або в іншому місці.*@
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+@*Цей скрипт представляє бібліотеку jQuery Unobtrusive Validation, яка працює в парі з бібліотекою 
+jQuery Validation та ASP.NET MVC або ASP.NET Core. Вона використовує атрибути даних HTML, які 
+додаються до елементів форми за допомогою валідаційних атрибутів, щоб налаштувати валідацію.*@
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

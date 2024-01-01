@@ -1,0 +1,89 @@
+﻿@*визначення моделі для цієї сторінки*@
+@model ShoppingCart
+@{
+    // визначається змінна ViewData["Title"] і їй призначається значення "GetUserCart".
+    ViewData["Title"] = "GetUserCart";
+}
+
+@*Цей елемент <div> встановлює ширину на 90% від ширини контейнера, в якому він знаходиться, 
+    і вирівнює його по центру за допомогою margin:auto. Крім того, застосовується клас mt-2 для 
+    задання відступу зверху.*@
+<div style="width:90%;margin:auto" class="mt-2">
+    @*Це умовний оператор if, який перевіряє, чи модель (Model) не є порожньою і чи існує 
+    колекція CartDetails, і чи є в ній елементи. Якщо це вірно, то виконується блок коду всередині.*@
+    @if (Model != null && Model.CartDetails != null && Model.CartDetails.Any())
+    {
+        @*Bиводить заголовок "My Cart".*@
+        <h5>My Cart</h5>
+        @*Створює таблицю з класами "table" і "table-striped" для стилізації та полоск.*@
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Image</th>
+                    <th>Genre</th>
+                    <th>Unit Price(INR)</th>
+                    <th>Total Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            @*Цей цикл foreach використовується для перебору кожного об'єкта в колекції CartDetails 
+            моделі. Для кожного товару у кошику генерується новий рядок таблиці.*@
+            @foreach (var item in Model.CartDetails)
+            {
+                <tr>
+                    @*Кожен товар у кошику має свій рядок таблиці з ім'ям книги.*@
+                    <td>@item.Book.BookName</td>
+                    <td>
+                        @*У цьому блоку визначається колонка для зображення книги. Якщо для книги не 
+                        вказано зображення (string.IsNullOrEmpty(item.Book.Image)), використовується 
+                        зображення за замовчуванням. Інакше виводиться зображення з шляхом 
+                        /images/@item.Book.Image.*@
+                        @if (string.IsNullOrEmpty(item.Book.Image))
+                        {
+                            <img src="/images/NoImage.png" style="width:80px;height:100px" />
+                        }
+                        else
+                        {
+                            <img src="/images/@item.Book.Image" style="width:80px;height:100px" />
+                        }
+                    </td>
+                    <td>@item.Book.Genre.GenreName</td>
+                    <td>@item.Book.Price X @item.Quantity</td>
+                    <td>@(item.Book.Price * item.Quantity)</td>
+                    <td>
+                        <a class="btn btn-info" href="/Cart/AddItem?bookId=@item.BookId&&redirect=1">+</a>
+                        <a class="btn btn-info" href="/cart/removeitem?bookid=@item.BookId">-</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+        @*Створення блоку <div> з класом "my-2" (відступ зверху і знизу), який 
+            визначає контейнер для інших елементів.*@
+        <div class="my-2">
+            @*Заголовок рівня <h5>, який виводить текст "Total(INR): ". Він використовується для 
+                вказівки на те, що нижче буде виводитися загальна сума.*@
+            <h5>Total(INR): </h5>
+
+            @*Цей вираз використовує прямий метод Sum() для обчислення суми всіх значень, отриманих з виразу item.Book.Price * item.Quantity 
+            для кожного товару у кошику.*@
+            @(Model.CartDetails.Sum(item => item.Book.Price * item.Quantity))
+        </div>
+
+        @*Створення блоку <div> з класом "my-2" (відступ зверху і знизу), який
+    визначає контейнер для інших елементів.*@
+        <div class="my-2">
+            <a class="btn btn-primary" asp-controller="Cart" asp-action="Checkout">Checkout</a>
+            <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back</a>
+        </div>
+
+    }
+    else
+    {
+        @*Виводить повідомлення*@
+        <h5>Cart is empty</h5>
+    }
+</div>

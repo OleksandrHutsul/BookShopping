@@ -1,0 +1,106 @@
+﻿@* цей файл відповідає за відображення і керування параметрами двофакторної аутентифікації користувача *@
+
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@using Microsoft.AspNetCore.Http.Features
+@*  Визначаєм тип моделі, яка використовується на цій сторінці. *@
+@model TwoFactorAuthenticationModel
+@{
+    // Ці значення використовуються для визначення заголовку та активної сторінки.
+    ViewData["Title"] = "Two-factor authentication (2FA)";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+@* Вставляєм частковий вид для відображення повідомлень статусу. *@
+<partial name="_StatusMessage" for="StatusMessage" />
+@* Виводить заголовок сторінки. *@
+<h3>@ViewData["Title"]</h3>
+@{
+    //Отримуєм об'єкт для взаємодії з функціоналом згоди на відстеження HTTP.
+    var consentFeature = HttpContext.Features.Get<ITrackingConsentFeature>();
+    //Перевірка, чи користувач надав згоду на відстеження. Якщо ні, умова буде 
+    // true (дозволяє продовжувати виконання коду).
+    @if (consentFeature?.CanTrack ?? true)
+    {
+        @if (Model.Is2faEnabled)
+        {
+            // Блок коду виконається, якщо двофакторна аутентифікація увімкнена для користувача
+            if (Model.RecoveryCodesLeft == 0)
+            {
+                // Блок для випадку, коли користувач вичерпав всі коди відновлення
+                // Виводиться повідомлення з порадою згенерувати нові коди відновлення
+                <div class="alert alert-danger">
+                    <strong>You have no recovery codes left.</strong>
+                    <p>You must <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a> before you can log in with a recovery code.</p>
+                </div>
+            }
+            else if (Model.RecoveryCodesLeft == 1)
+            {
+                // Блок для випадку, коли у користувача залишився один код відновлення
+                // Виводиться повідомлення з можливістю згенерувати нові коди відновлення
+                <div class="alert alert-danger">
+                    <strong>You have 1 recovery code left.</strong>
+                    <p>You can <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
+                </div>
+            }
+            else if (Model.RecoveryCodesLeft <= 3)
+            {
+                // Блок для випадку, коли у користувача залишилося менше або рівно 3 коди відновлення
+                // Виводиться повідомлення, порада згенерувати нові коди відновлення
+                <div class="alert alert-warning">
+                    <strong>You have @Model.RecoveryCodesLeft recovery codes left.</strong>
+                    <p>You should <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
+                </div>
+            }
+
+            if (Model.IsMachineRemembered)
+            {
+                // Блок коду, який виконається, якщо машина користувача запам'ятована (remembered)
+                // Виводиться форма для забуття браузера
+                <form method="post" style="display: inline-block">
+                    <button type="submit" class="btn btn-primary">Forget this browser</button>
+                </form>
+            }
+            // Додаткові можливості для управління двофакторною аутентифікацією
+            /*Це посилання виводить кнопку, яка дозволяє користувачеві вимкнути двофакторну 
+             * аутентифікацію. Воно вказує на сторінку ./Disable2fa, яка містить логіку 
+             * для вимкнення двофакторної аутентифікації. Стилізація кнопки виконана за допомогою 
+             * класів btn та btn-primary.*/
+            <a asp-page="./Disable2fa" class="btn btn-primary">Disable 2FA</a>
+            /*Це посилання виводить кнопку, яка дозволяє користувачеві скинути (генерувати нові) коди 
+             * відновлення. Воно вказує на сторінку ./GenerateRecoveryCodes, яка містить 
+             * логіку для генерації нових кодів відновлення. Стилізація кнопки також виконана за 
+             * допомогою класів btn та btn-primary.*/
+            <a asp-page="./GenerateRecoveryCodes" class="btn btn-primary">Reset recovery codes</a>
+        }
+
+        <h4>Authenticator app</h4>
+        @if (!Model.HasAuthenticator)
+        {
+            // Блок коду, який виконається, якщо у користувача немає налаштованого аутентифікатора
+            // Виводиться посилання для налаштування аутентифікатора
+            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">Add authenticator app</a>
+        }
+        else
+        {
+            // Блок коду, який виконається, якщо у користувача є налаштований аутентифікатор
+            // Виводяться посилання для налаштування та скидання аутентифікатора
+            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">Set up authenticator app</a>
+            <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn-primary">Reset authenticator app</a>
+        }
+    }
+    else
+    {
+        //виводиться блок з червоним фоном (alert-danger), що вказує на помилку чи негативний стан.
+        <div class="alert alert-danger">
+            <strong>Privacy and cookie policy have not been accepted.</strong>
+            <p>You must accept the policy before you can enable two factor authentication.</p>
+        </div>
+    }
+}
+
+@* Ця секція дозволяє вбудовувати скрипти на сторінку. У даному випадку, вставляється частковий вид
+_ValidationScriptsPartial, який містить необхідні скрипти для валідації форми. *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

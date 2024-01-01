@@ -1,0 +1,10 @@
+﻿@* Цей файл використовується для імпортування просторів імен та налаштування тег-допоміжників (tag helpers) 
+для всіх видів (views) у даній області *@
+@using Microsoft.AspNetCore.Identity
+@using BookShoppingCartMvcUI.Areas.Identity
+@using BookShoppingCartMvcUI.Areas.Identity.Pages
+@* додаєм тег-допоміжника (tag helper) для всіх видів у даній області. Тег-допоміжники - це зручний 
+спосіб використання серверної логіки на стороні клієнта у вигляді HTML-тегів. Даний рядок конфігурує 
+тег-допоміжника для використання всіх тег-допоміжників з простору імен 
+Microsoft.AspNetCore.Mvc.TagHelpers. *@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

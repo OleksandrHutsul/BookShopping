@@ -1,0 +1,92 @@
+﻿@* Цей код є частиною Razor-сторінки для відображення замовлень користувача. *@
+@* Задається модель для цієї сторінки, і вона визначає тип даних, які будуть передані на сторінку. 
+У цьому випадку очікується колекція об'єктів типу Order. *@
+@model IEnumerable<Order>
+@{
+}
+@*Визначається блок <div>, який встановлює ширину на 100% та додає клас mt-2 для відступу зверху.*@
+<div style="width:100%" class="mt-2"> 
+    
+    @*Додається посилання "Back" для повернення на сторінку керування обліковим записом користувача.*@
+    <a href="/Identity/Account/Manage" class="btn btn-primary my-2">Back</a>
+   
+    @*Заголовок "My Orders" для відображення на сторінці.*@
+    <h4>My Orders</h4>
+
+    @*Умова, яка перевіряє, чи модель має дані (замовлення) та чи є хоча б одне замовлення в колекції.*@
+    @if (Model != null && Model.Any())
+    {
+        @*Визначається таблиця для відображення списку замовлень.*@
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Order Date</th>
+                    <th>Order Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @*Цикл foreach, який пройдеться по кожному об'єкту типу Order у колекції.*@
+                @foreach (var order in Model)
+                {
+                        <tr>
+                            @*Виведення дати створення замовлення у відповідному форматі.*@
+                            <td>@order.CreateDate.ToString("dd-MM-yyyy")</td>
+                            @*Виведення статусу замовлення.*@
+                            <td>@order.OrderStatus.StatusName</td>
+                        </tr>
+                    @*Умова, яка перевіряє наявність деталей замовлення.*@
+                    @if (order.OrderDetail != null && order.OrderDetail.Any())
+                    {
+                        <tr>
+                            <td>
+                                @*Визначається таблиця для відображення списку замовлень.*@
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Book</th>
+                                            <th class="text-center">Image</th>
+                                            <th class="text-center">Genre</th>
+                                            <th class="text-center">Unit Price(INR)</th>
+                                            <th class="text-center">Quantity</th>
+                                            <th class="text-center">Total Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @*Вкладений цикл foreach для відображення деталей замовлення.*@
+                                        @foreach (var item in order.OrderDetail)
+                                        {
+                                            var (price, quantity) = (item.Book.Price, item.Quantity);
+                                            @*Виведення різних властивостей товарів у замовленні, таких як
+                                            назва, зображення, жанр, ціна за одиницю та загальна ціна за товар.*@
+                                            <tr>
+                                                <td class="text-center" style="width:332px;height:117px">@item.Book.BookName</td>
+                                                <td class="text-center">
+                                                    <img src="/images/@(item.Book.Image ?? "NoImage.png")" style="width:80px;height:100px" />
+                                                </td>
+                                                <td class="text-center" style="width:118px;height:117px">@item.Book.Genre.GenreName</td>
+                                                <td class="text-center" style="width:171px;height:117px">@string.Format("{0:C}", price)</td>
+                                                <td class="text-center" style="width:108px;height:117px">@quantity</td>
+                                                <td class="text-center" style="width:125px;height:117px">@string.Format("{0:C}", price * quantity)</td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td class="text-center" colspan="5">
+                                                @*Текст "Total:", що виводиться перед сумою замовлення.*@
+                                                Total:
+                                            </td>
+                                            <td class="text-center">@string.Format("{0:C}", order.OrderDetail.Sum(item => item.Book.Price * item.Quantity))</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h5>No orders</h5>
+    }
+</div>

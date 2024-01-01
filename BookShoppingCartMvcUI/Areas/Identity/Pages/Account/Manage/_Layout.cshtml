@@ -1,0 +1,49 @@
+﻿@*  використовується як макет (layout) для сторінок в розділі "Account\Manage". *@
+@{
+    /*Це умовна конструкція, яка перевіряє, чи в ViewData(колекція даних, що передаються з 
+     * контролера до представлення) є значення під ключем "ParentLayout".Метод TryGetValue 
+     * намагається отримати значення для заданого ключа, і якщо воно присутнє, результат 
+     * записується в змінну parentLayout. Умова також перевіряє, чи значення не є null.*/
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
+    {
+        /* Якщо умова попереднього кроку виконується (тобто в ViewData є значення для ключа 
+         * "ParentLayout" і це значення не є null), то значення "ParentLayout" приводиться до 
+         * рядкового типу методом ToString(), і це значення встановлюється як макет для поточної 
+         * сторінки за допомогою Layout = parentLayout.ToString();.*/
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        /*Якщо умова попереднього кроку не виконується, то значення макету встановлюється як шлях 
+         * до файлу _Layout.cshtml в папці "Areas\Identity\Pages".*/
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+}
+
+@* Цей рядок виводить заголовок сторінки "Manage your account". *@
+<h1>Manage your account</h1>
+
+<div>
+    @* Виводить заголовок *@
+    <h2>Change your account settings</h2>
+    <hr />
+    <div class="row">@* Визначає рядок для вирівнювання вмісту у вигляді Bootstrap-рядка. *@
+        <div class="col-md-3">@* Визначає колонку ширини 3 (md-3) у вигляді Bootstrap-рядка.  *@
+            @* Вставляє частковий вид (partial view) з назвою "_ManageNav". Це навігаційне меню, 
+            яке містить посилання на різні сторінки для управління обліковим записом. *@
+            <partial name="_ManageNav" />
+        </div>
+        <div class="col-md-9">@* Визначає колонку ширини 9 (md-9) у вигляді Bootstrap-рядка. *@
+            @* вказує на те місце, де буде вставлено вміст сторінки, який розташований 
+            в місці виклику цього методу. *@
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@* Цей блок коду включає секцію "Scripts" зі сторінки. Це дозволяє вставляти скрипти на сторінку за 
+допомогою секції "Scripts". @RenderSection("Scripts", required: false) перевіряє, чи існує така 
+секція на сторінці, і вставляє її в макет. *@
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

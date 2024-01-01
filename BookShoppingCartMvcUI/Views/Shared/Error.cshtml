@@ -1,0 +1,35 @@
+﻿@*Цей файл призначений для виведення зручного інтерфейсу у випадках виникнення неперехоплених 
+помилок у ASP.NET Core додатку. Він також надає деяку інформацію про режим розробки та 
+застереження стосовно використання режиму розробки на розгорнутих системах.*@
+@*Цей рядок визначає модель, яка використовується на цій сторінці. *@
+@model ErrorViewModel
+@{
+    //Встановлює значення "Error" для властивості Title у ViewData
+    ViewData["Title"] = "Error";
+}
+@*Виводять заголовки, які показують користувачеві, що сталася помилка.*@
+<h1 class="text-danger">Error.</h1>
+<h2 class="text-danger">An error occurred while processing your request.</h2>
+
+@*Умовна конструкція, яка перевіряє, чи слід відображати RequestId. Якщо ShowRequestId 
+дорівнює true, тоді відображається <p> з RequestId.*@
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+    </p>
+}
+@*Виводить заголовок для розділу.*@
+<h3>Development Mode</h3>
+@*Два <p> елементи надають короткий опис режиму розробки та наголошують на тому, що в режимі 
+ розробки можуть виводитися деталізовані дані про помилку, які не повинні бути включені в 
+ розгорнутому додатку через проблеми безпеки.*@
+<p>
+    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
+</p>
+<p>
+    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
+    It can result in displaying sensitive information from exceptions to end users.
+    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
+    and restarting the app.
+</p>

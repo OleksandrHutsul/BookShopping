@@ -1,0 +1,58 @@
+﻿@* Цей файл є сторінкою, яка використовується для асоціації зовнішнього облікового запису з 
+обліковим записом на сайті. *@
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначаєм тип моделі, яка використовується на цій сторінці. *@
+@model ExternalLoginModel
+@{
+    // Встановлюєм заголовок сторінки у ViewData.
+    ViewData["Title"] = "Register";
+}
+@* Виводить заголовок сторінки у розділі HTML. Заголовок береться з ViewData, який був встановлений раніше. *@
+<h1>@ViewData["Title"]</h1>
+@* Заголовок другого рівня, який надає інструкції щодо асоціації зовнішнього облікового запису. *@
+<h2 id="external-login-title">Associate your @Model.ProviderDisplayName account.</h2>
+<hr />
+
+@* Параграф, який містить інформацію про те, що ви успішно аутентифікувалися зі зовнішнім обліковим 
+записом, і вас просять ввести електронну адресу для завершення реєстрації. *@
+<p id="external-login-description" class="text-info">
+    You've successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
+    Please enter an email address for this site below and click the Register button to finish
+    logging in.
+</p>
+
+@* Визначає блок з формою для введення електронної пошти. Форма використовується для введення електронної 
+пошти, яка буде пов'язана з зовнішнім обліковим записом. *@
+<div class="row">@* Визначає новий рядок у макеті Bootstrap. *@
+    <div class="col-md-4">@* Визначає колонку ширини 4 (md-4) у макеті Bootstrap. *@
+        @* Ця форма використовується для виклику обробника Confirmation на тій же сторінці, коли вона 
+        відправляється. Обробник відповідає за обробку логіки підтвердження зовнішнього входу. *@
+        <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            @* Виводить повідомлення про помилки валідації, якщо вони виникають під час
+            введення двофакторного аутентифікаційного коду. *@
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            @* Цей блок визначає форму для введення електронної адреси. 
+            Клас form-floating використовується для надання ефекту плаваючого тексту у полі вводу. *@
+            <div class="form-floating mb-3">
+                @* Це поле вводу для введення електронної адреси користувача. 
+                Властивість asp-for пов'язана з властивістю Input.Email в моделі ConfirmEmailChangeModel. *@
+                <input asp-for="Input.Email" class="form-control" autocomplete="email" placeholder="Please enter your email."/>
+                @* Цей елемент label пов'язаний з полем вводу, вказуючи на те, що це 
+                поле призначене для введення електронної адреси. *@
+                <label asp-for="Input.Email" class="form-label"></label>
+                @* Цей елемент span відображає повідомлення про помилку для елемента 
+                введення електронної адреси, якщо така помилка виникає. *@
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            @* Кнопка для відправки форми та входу. *@
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+        </form>
+    </div>
+</div>
+
+@* Ця секція дозволяє вбудовувати скрипти на сторінку. У даному випадку, вставляється частковий вид
+_ValidationScriptsPartial, який містить необхідні скрипти для валідації форми. *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

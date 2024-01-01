@@ -1,0 +1,45 @@
+﻿@* цей файл відображає сторінку, на якій користувач може переглядати і керувати своїми особистими даними, а 
+також має можливість завантажити чи видалити ці дані. *@
+
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначаєм тип моделі, яка використовується на цій сторінці. *@
+@model PersonalDataModel
+@{
+    // Ці значення використовуються для визначення заголовку та активної сторінки.
+    ViewData["Title"] = "Personal Data";
+    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+}
+@*  Виводим заголовок сторінки. *@
+<h3>@ViewData["Title"]</h3>
+
+@* Визначає новий рядок у макеті Bootstrap. *@
+<div class="row">
+    <div class="col-md-6">@* Визначає колонку ширини 6 (md-6) у макеті Bootstrap. *@
+        @* Виводить текст, який інформує користувача про наявність його особистих даних 
+        на сайті і надає можливість їх завантажити або видалити. *@
+        <p>Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
+        <p>
+            @* повідомляє користувача, що видалення особистих даних призведе до невідворотного видалення 
+            облікового запису, і це не може бути відновлено. *@
+            <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+        </p>
+        @* Визначає форму для завантаження особистих даних. asp-page="DownloadPersonalData" вказує на 
+        маршрут сторінки обробника для завантаження особистих даних. *@
+        <form id="download-data" asp-page="DownloadPersonalData" method="post">
+            @* Виводить кнопку для відправлення форми та початку процесу завантаження особистих даних. *@
+            <button class="btn btn-primary" type="submit">Download</button>
+        </form>
+        <p>
+            @* Виводить посилання (з стилізованим кнопковим виглядом) для переходу на сторінку 
+            обробника видалення особистих даних *@
+            <a id="delete" asp-page="DeletePersonalData" class="btn btn-danger">Delete</a>
+        </p>
+    </div>
+</div>
+
+@* Ця секція дозволяє вбудовувати скрипти на сторінку. У даному випадку, вставляється частковий вид
+_ValidationScriptsPartial, який містить необхідні скрипти для валідації форми. *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

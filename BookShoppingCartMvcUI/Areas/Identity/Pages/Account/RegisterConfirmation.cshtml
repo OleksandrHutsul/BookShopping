@@ -1,0 +1,31 @@
+﻿@* Цей файл сторінки відображає інформацію користувачу щодо підтвердження реєстрації та, якщо потрібно, 
+надає посилання для підтвердження облікового запису через електронну пошту. *@
+
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначає тип моделі, яка використовується на цій сторінці. *@
+@model RegisterConfirmationModel
+@{
+    // Встановлює заголовок сторінки у ViewData.
+    ViewData["Title"] = "Register confirmation";
+}
+@* Виводить заголовок сторінки у розділі HTML. Заголовок береться з ViewData, який був встановлений раніше. *@
+<h1>@ViewData["Title"]</h1>
+
+@* Це блок коду, який визначає, яке повідомлення відобразити в залежності від умови, чи потрібно 
+відображати посилання для підтвердження облікового запису. *@
+@{
+    if (@Model.DisplayConfirmAccountLink)
+    {
+<p>
+    This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these docs</a> for how to configure a real email sender.
+    Normally this would be emailed: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
+</p>
+    }
+    else
+    {
+<p>
+        Please check your email to confirm your account.
+</p>
+    }
+}

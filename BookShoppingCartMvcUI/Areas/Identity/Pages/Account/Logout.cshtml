@@ -1,0 +1,34 @@
+﻿@* Цей файл є сторінкою для виходу користувача *@
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначає тип моделі, яка використовується на цій сторінці. *@
+@model LogoutModel
+@{
+    // Встановлює заголовок сторінки у ViewData.
+    ViewData["Title"] = "Log out";
+}
+
+<header>
+    @* Виводить заголовок сторінки у розділі HTML. Заголовок береться з ViewData, 
+    який був встановлений раніше. *@
+    <h1>@ViewData["Title"]</h1>
+    @* Цей блок коду містить внутрішній код C#, який перевіряє, чи користувач вже аутентифікований. *@
+    @{
+        /*Перевіряє, чи користувач є аутентифікованим. Якщо так, то виводить форму для виходу.*/
+        if (User.Identity?.IsAuthenticated ?? false)
+        {
+            /*Форма для виходу, яка використовує метод POST для безпечного виходу з облікового запису.
+            * asp-page вказує шлях до обробника виходу (/Account/Logout), а asp-route-returnUrl
+            * визначає, куди перенаправити після виходу.
+            * Кнопка, за допомогою якої користувач може ініціювати вихід.*/
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button> 
+            </form>
+        }
+        else
+        {
+        /*Повідомлення про успішний вихід, якщо користувач не аутентифікований.*/
+            <p>You have successfully logged out of the application.</p>
+        }
+    }
+</header>

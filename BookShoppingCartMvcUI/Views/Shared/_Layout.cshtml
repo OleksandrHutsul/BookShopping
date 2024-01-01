@@ -1,0 +1,132 @@
+﻿@*Використання макетів, таких як _Layout.cshtml, дозволяє створювати єдинообразний вигляд 
+для всіх сторінок веб-додатку, спрощуючи управління та підтримку.*@
+
+<!doctype html>
+@* Визначає мову сторінки *@
+<html lang="en">
+@*Визначає розділ <head> сторінки, який містить мета-теги, заголовок сторінки і 
+посилання на зовнішні таблиці стилів (CSS).*@
+<head>
+    <meta charset="utf-8"> @* визначає кодування сторінки.*@
+    @*регулює відображення та масштабування на мобільних пристроях.*@
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Online Book Store - Book Maze</title>@*задає заголовок вікна браузера*@
+    @*вказує на використання локального файлу стилів Bootstrap.*@
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    @*підключає CSS-файл іконок Bootstrap з CDN.*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+</head>
+<body>
+    @*Визначає навігаційний блок (<nav>) з використанням стилів Bootstrap для створення навігаційного 
+        меню. Клас navbar-expand-lg вказує, що меню розгортатиметься на екранах розміром lg і більше. 
+        navbar-dark bg-primary визначає темний фон (navbar-dark) і колір фону (bg-primary).*@
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        @*Обгортає вміст навігаційного меню для вирівнювання його з іншим вмістом.*@
+        <div class="container-fluid">
+            @*Визначає елемент <a> як назву додатку. При кліці на це посилання користувач буде 
+                перенаправлений на головну сторінку (Home/Index).*@
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">Book Maze</a>
+            @*Визначає кнопку-перемикач для мобільних екранів, яка з'являється при зменшенні розміру 
+            екрана. data-bs-toggle та data-bs-target вказують, який елемент буде розгортатися/згортатися 
+            при кліці на кнопку. У цьому випадку, це елемент з ідентифікатором navbarColor01.*@
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            @*Визначає обгортку для елементів навігаційного меню, які будуть розгортатися чи згортатися, 
+            залежно від розміру екрана. id="navbarColor01" відповідає за визначений елемент, який 
+            буде розгортатися/згортатися.*@
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                @*Визначає список (<ul>) з елементами меню. Кожен пункт меню визначається елементом 
+                    списку (<li>) та посиланням (<a>). me-auto розташовує елементи меню зліва.*@
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-controller="Home" asp-action="Index">
+                            Home
+                            <span class="visually-hidden">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="AdminPanel" asp-action="Index">Admin Panel</a>
+                        </li>
+                    }
+                </ul>
+                @*Вставляє частковий представлення (partial view) з ім'ям _LoginPartial. В нашому випадку 
+                це блок для входу/реєстрації та інших подібних дій користувача.*@
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
+    </nav>
+    @*Визначає контейнер для вмісту сторінок. @RenderBody() - це тег Razor, який вставляє основний 
+    вміст кожної конкретної сторінки, яка використовує цей макет. Вміст розташовується всередині 
+    <div class="container">.*@
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    <div class="container">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <div class="col-md-4 d-flex align-items-center">
+                <a asp-controller="Home" asp-action="Index" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+                    <svg class="bi" width="30" height="24"><i class="bi bi-book"></i></svg>
+                </a>
+                <span class="mb-3 mb-md-0 text-body-secondary">© 2023 Hutsul Oleksandr</span>
+            </div>
+
+            <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+                <li class="ms-3"><a class="text-body-secondary" href="https://www.linkedin.com/in/oleksandr-hutsul-5b2b95254/"><svg class="bi" width="24" height="24"><i class="bi bi-linkedin"></i></svg></a></li>
+                <li class="ms-3"><a class="text-body-secondary" href="https://www.instagram.com/sasha11hutsul/"><svg class="bi" width="24" height="24"><i class="bi bi-instagram"></i></svg></a></li>
+                <li class="ms-3"><a class="text-body-secondary" href="https://github.com/OleksandrHutsul"><svg class="bi" width="24" height="24"><i class="bi bi-github"></i></svg></a></li>
+                <li class="ms-3"><a class="text-body-secondary" href="https://t.me/sasha11_7"><svg class="bi" width="24" height="24"><i class="bi bi-telegram"></i></svg></a></li>
+            </ul>
+        </footer>
+    </div>
+    @*Це підключення скрипта Bootstrap для використання функціональності JavaScript, яка включена в бандл
+    Bootstrap. Атрибути integrity і crossorigin допомагають впевнитися в тому, що скрипт завантажується з
+    надійного джерела і уникнути можливих атак на зміну вмісту.*@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script>
+        // При завантаженні сторінки викликається функція loadCartCount().
+        loadCartCount();
+        /*Визначає асинхронну функцію loadCartCount(). Ключове слово async вказує, що ця функція
+        використовує асинхронний код.*/
+        async function loadCartCount() {
+            try {
+                /*Викликає fetch для виконання HTTP-запиту за адресою /Cart/GetTotalItemInCart. Цей запит
+                призначений для отримання загальної кількості товарів у корзині*/
+                var response = await fetch(`/Cart/GetTotalItemInCart`);
+                /*Отримана відповідь зберігається у змінній response, і виводиться в консоль
+                за допомогою console.log для дебагу.*/
+                console.log(response)
+                //Перевіряє статус відповіді. Якщо він дорівнює 200 (OK), це означає успішний запит.
+                if (response.status == 200) {
+                    /*Викликає response.json() для витягування JSON з тіла відповіді.
+                    Отриманий JSON зберігається в змінну result.*/
+                    var result = await response.json();
+                    /*Отримує елемент DOM за допомогою document.getElementById("cartCount"). Це елемент,
+                    в якому відображається кількість товарів у корзині.*/
+                    var cartCountEl = document.getElementById("cartCount");
+                    /*Встановлює вміст цього елемента рівним значенню, отриманому з
+                    сервера (кількість товарів у корзині).*/
+                    cartCountEl.innerHTML = result;
+                }
+            }
+            /*Вказує блок коду для обробки помилок. Якщо виникає помилка в області коду в межах try,
+            вона ловиться і обробляється у блоку catch. В цьому випадку, будь-яка помилка виводиться
+            в консоль для дебагу.*/
+            catch (err) {
+                console.log(err);
+            }
+        }
+    </script>
+</body>
+</html>
+
+@* цей рядок коду шукає секцію з іменем "Scripts" у вигляді контенту, який був би вставлений в макет.
+Якщо така секція існує, її вміст буде вставлений у це місце. Якщо секція не знайдена, 
+нічого не вставляється. *@
+@await RenderSectionAsync("Scripts", required: false)

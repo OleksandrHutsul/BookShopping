@@ -1,0 +1,51 @@
+﻿@*Цей файл використовується для включення скриптів валідації на сторінках *@
+
+@* визначаєм блок коду, який повинен включатися тільки в режимі розробки (Development environment). У 
+режимі розробки використовуються локальні версії скриптів для валідації. *@
+<environment include="Development">
+    @* додаєм посилання на скрипт jquery.validate.js для валідації форм за допомогою jQuery. *@
+    <script src="~/Identity/lib/jquery-validation/dist/jquery.validate.js"></script>
+    @* додаєм посилання на скрипт jquery.validate.unobtrusive.js, який забезпечує 
+    підтримку невторгливої валідації *@
+    <script src="~/Identity/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+</environment>
+@* визначаєм блок коду, який повинен включатися в усіх середовищах, за винятком режиму розробки. 
+У виробничому середовищі використовуються CDN-версії скриптів для валідації. *@
+<environment exclude="Development">
+    @* додаєм посилання на CDN-версію скрипта jquery.validate.min.js для валідації форм за допомогою jQuery. *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"
+            @* Визначаєм локальний шлях до скрипта, який буде використаний в разі недоступності CDN. *@
+            asp-fallback-src="~/Identity/lib/jquery-validation/dist/jquery.validate.min.js"
+            @* Умова, яка визначає, чи необхідно використовувати локальний скрипт (fallback), 
+            якщо відсутній CDN. *@
+            asp-fallback-test="window.jQuery && window.jQuery.validator"
+            @* Визначаєм атрибут crossorigin, який вказує браузеру, що сервер не використовує 
+            кросдоменні запити з авторизацією. *@
+            crossorigin="anonymous"
+            @* Визначаєм кодову суму (hash) для перевірки цілісності файлу, що завантажується з CDN. 
+            Це дозволяє браузеру перевіряти, чи не змінився файл відповідно до очікувань. *@
+            integrity="sha384-rZfj/ogBloos6wzLGpPkkOr/gpkBNLZ6b6yLy4o+ok+t/SAKlL5mvXLr0OXNi1Hp">
+    </script>
+    @* Це посилання на CDN (Content Delivery Network) версію скрипта jquery.validate.unobtrusive.min.js. 
+    CDN дозволяє завантажувати ресурси, такі як скрипти, з серверів, які розташовані найближче до 
+    кінцевого користувача, що може покращити швидкість завантаження сторінки. *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"
+            @* Якщо не вдається завантажити скрипт з CDN, використовуйте локальний файл, який розташований за 
+            шляхом ... Це забезпечує можливість використовувати локальний ресурс у випадку, 
+            якщо CDN недоступний. *@
+            asp-fallback-src="~/Identity/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
+            @* Це вираз, який перевіряє наявність необхідних об'єктів і методів в глобальному об'єкті window. 
+            Якщо ці об'єкти і методи доступні, це вважається успішним тестом, і локальний файл буде 
+            використано. В іншому випадку, якщо тест не вдається, використовується локальний файл, 
+            який розташований за шляхом, вказаним у asp-fallback-src. *@
+            asp-fallback-test="window.jQuery && window.jQuery.validator && window.jQuery.validator.unobtrusive"
+            @* Визначаєм атрибут crossorigin, який вказує браузеру, що сервер не використовує
+            кросдоменні запити з авторизацією. *@
+            crossorigin="anonymous"
+            @* Це атрибут, який містить кодову суму (hash), яка використовується для перевірки цілісності 
+            завантаженого файлу. Браузери можуть використовувати цей hash для перевірки того, чи файл 
+            не був змінений під час завантаження з CDN. Якщо хеш не співпадає, браузер може відмовити 
+            від використання цього файлу, запобігаючи можливим атакам. *@
+            integrity="sha384-R3vNCHsZ+A2Lo3d5A6XNP7fdQkeswQWTIPfiYwSpEP3YV079R+93YzTeZRah7f/F">
+    </script>
+</environment>

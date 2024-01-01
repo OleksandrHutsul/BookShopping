@@ -1,0 +1,57 @@
+﻿@*Файл _LoginPartial.cshtml дозволяє вбудовувати цей навігаційний блок з авторизацією та управлінням 
+користувачами в різні частини веб-додатку без дублювання коду.*@
+
+@using Microsoft.AspNetCore.Identity
+@*Ці рядки використовують ключове слово @inject, щоб внедрити SignInManager та UserManager у часткове 
+представлення. SignInManager відповідає за управлінням процесом входу користувача, а UserManager - 
+за управлінням користувачами.*@
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@*Цей блок визначає навігаційне меню, яке буде відображатися у верхній частині сторінки.*@
+<ul class="navbar-nav">
+    <li class="nav-item">
+        <a class="nav-link" href="/Cart/GetUserCart">
+            <span id="cartCount" class="badge text-bg-info">0</span>
+            <i class="bi bi-cart text-white"></i>
+        </a>
+    </li>
+    @*Перевірка, чи користувач увійшов в систему
+    Ця умова перевіряє, чи користувач увійшов в систему. Якщо так, відображається блок для вивіду 
+    інформації про користувача та кнопки виходу, інакше - блок для виводу посилань на реєстрацію та вхід.
+    *@
+    @if (SignInManager.IsSignedIn(User))
+    {
+        @* Для блоку <li>. Якщо користувач увійшов в систему, виводиться блок із вітанням та інформацією про користувача,
+    а також кнопкою виходу.Якщо користувач не увійшов в систему, виводяться посилання на сторінки 
+    реєстрації та входу.*@
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                Hello <span id="username">@User.Identity?.Name</span>!
+                @*Цей блок перевіряє, чи користувач має роль "Admin" і виводить відповідний текст, 
+                якщо умова виконується.*@
+                @if (User.IsInRole("Admin"))
+                {
+                    <span>(Admin)</span>
+                }
+            </a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        @*Ця форма дозволяє користувачеві вийти з системи. Вона використовує asp-page для вказівки 
+        маршруту обробника виходу з системи та asp-route-returnUrl для визначення URL, на який 
+        користувач буде перенаправлений після виходу.*@
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
+</ul>

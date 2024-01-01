@@ -1,0 +1,41 @@
+﻿@* Цей файл ShowRecoveryCodes.cshtml служить для відображення кодів відновлення на сторінці, 
+яка викликається, коли користувач генерує або переглядає свої коди відновлення для двофакторної 
+аутентифікації. *@
+
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначаєм тип моделі, яка використовується на цій сторінці. *@
+@model ShowRecoveryCodesModel
+@{
+    // Ці значення використовуються для визначення заголовку та активної сторінки.
+    ViewData["Title"] = "Recovery codes";
+    ViewData["ActivePage"] = "TwoFactorAuthentication";
+}
+@* Вставляєм частковий вид для відображення повідомлень статусу. *@
+<partial name="_StatusMessage" for="StatusMessage" />
+@*  Виводим заголовок сторінки. *@
+<h3>@ViewData["Title"]</h3>
+
+@* блок з попередженням, яке радить користувачеві зберігати коди відновлення в 
+надійному місці та надає інформацію про наслідки втрати доступу до облікового запису при 
+втраті пристрою та відсутності кодів відновлення. *@
+<div class="alert alert-warning" role="alert">
+    <p>
+        <strong>Put these codes in a safe place.</strong>
+    </p>
+    <p>
+        If you lose your device and don't have the recovery codes you will lose access to your account.
+    </p>
+</div>
+@* Створюєм рядок для організації вмісту в кілька колонок. *@
+<div class="row">
+    <div class="col-md-12">
+        @* Використовує цикл for, щоб пройтися по масиву RecoveryCodes у моделі та вивести коди відновлення. 
+        Використовується інкремент row += 2, оскільки коди виводяться парами. *@
+        @for (var row = 0; row < Model.RecoveryCodes.Length; row += 2)
+        {
+            /*Виводить коди відновлення, додаючи пробіл між парними кодами для кращого вигляду.*/
+            <code class="recovery-code">@Model.RecoveryCodes[row]</code><text>&nbsp;</text><code class="recovery-code">@Model.RecoveryCodes[row + 1]</code><br />
+        }
+    </div>
+</div>

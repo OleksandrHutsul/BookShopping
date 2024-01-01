@@ -1,0 +1,77 @@
+﻿@* Цей файл використовується для відображення сторінки з управлінням електронною 
+поштою користувача в контексті аутентифікації та керування обліковим записом. *@
+
+@*  Ця директива вказує, що цей файл є сторінкою *@
+@page
+@*  Визначаєм тип моделі, яка використовується на цій сторінці. *@
+@model EmailModel
+@{
+    // Ці значення використовуються для визначення заголовку та активної сторінки.
+    ViewData["Title"] = "Manage Email";
+    ViewData["ActivePage"] = ManageNavPages.Email;
+}
+
+@*  Виводим заголовок сторінки. *@
+<h3>@ViewData["Title"]</h3>
+@* Вставляєм частковий вид для відображення повідомлень статусу. *@
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="row">@* Визначає новий рядок у макеті Bootstrap. *@
+    <div class="col-md-6">@* Визначає колонку ширини 6 (md-6) у макеті Bootstrap. *@
+        @* форма з ідентифікатором "email-form" і методом "post". *@
+        <form id="email-form" method="post">
+            @* Цей рядок вставляє елемент для відображення всіх повідомлень про помилки валідації форми. *@
+            <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+            @* Це умовна конструкція, яка перевіряє, чи електронна пошта користувача підтверджена. *@
+            @if (Model.IsEmailConfirmed)
+            {
+                //Створює контейнер для елементів форми.
+                <div class="form-floating mb-3 input-group">
+                   @*  Виводить елемент введення для електронної пошти, який вказує на 
+                    поточну електронну пошту користувача та встановлює атрибут disabled, оскільки 
+                    електронна пошта вже підтверджена. *@
+                    <input asp-for="Email" class="form-control" placeholder="Please enter your email." disabled />
+                        @* Створює контейнер для додаткового вмісту після елементу введення *@
+                        <div class="input-group-append">
+                        @*     Виводить іконку підтвердження (зелена галочка), щоб вказати, 
+                            що електронна пошта вже підтверджена. *@
+                            <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
+                        </div>
+                    @* Виводить мітку для елементу введення. *@
+                    <label asp-for="Email" class="form-label"></label>
+                </div>
+            }
+            else
+            {
+                <div class="form-floating mb-3"> @* Створює контейнер для елементів форми. *@
+                    @* Виводить елемент введення для електронної пошти, який вказує на поточну 
+                    електронну пошту користувача та встановлює атрибут disabled. *@
+                    <input asp-for="Email" class="form-control" placeholder="Please enter your email." disabled />
+                    @* Виводить мітку для елементу введення. *@
+                    <label asp-for="Email" class="form-label"></label>
+                    @* Виводить кнопку для відправлення листа з підтвердженням, 
+                    якщо електронна пошта не підтверджена. *@
+                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">Send verification email</button>
+                </div>
+            }
+            @* Створює контейнер для нової електронної пошти, яку користувач може ввести. *@
+            <div class="form-floating mb-3">
+                @* Виводить елемент введення для нової електронної пошти. *@
+                <input asp-for="Input.NewEmail" class="form-control" autocomplete="email" aria-required="true" placeholder="Please enter new email." />
+                @* Виводить мітку для елементу введення нової електронної пошти. *@
+                <label asp-for="Input.NewEmail" class="form-label"></label>
+                @* Виводить повідомлення про помилку валідації, якщо така є. *@
+                <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
+            </div>
+            @* Виводить кнопку для відправлення форми та виклику 
+            обробника ChangeEmail при зміні електронної пошти. *@
+            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="w-100 btn btn-lg btn-primary">Change email</button>
+        </form>
+    </div>
+</div>
+
+@* Ця секція дозволяє вбудовувати скрипти на сторінку. У даному випадку, вставляється частковий вид
+_ValidationScriptsPartial, який містить необхідні скрипти для валідації форми. *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,23 @@
+﻿@model Book
+
+<div class="col-md-5 mt-7 text-center">
+    <h2>Add a Book</h2>
+    <form asp-action="AddBook" asp-controller="AdminPanel" method="post" enctype="multipart/form-data">
+        <label>Book Name:</label>
+        <input asp-for="BookName" class="form-control" placeholder="Enter the title of the book" />
+
+        <label>Price:</label>
+        <input asp-for="Price" class="form-control" placeholder="Enter price" type="number" min="0" />
+
+        <label>Image:</label>
+        <input type="file" asp-for="Image" class="form-control" />
+
+        <label>Genre:</label>
+        <input asp-for="GenreId" class="form-control" placeholder="Enter number from 1 to 4" type="number" min="1" max="4" />
+
+        <label>Author Name:</label>
+        <input asp-for="AuthorName" class="form-control" placeholder="Enter the author's name" />
+
+        <button type="submit" class="btn btn-primary">Add Book</button>
+    </form>
+</div>

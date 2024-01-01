@@ -1,0 +1,32 @@
+﻿@* використовується для відображення навігаційного меню, яке дозволяє користувачам переміщатися 
+між різними сторінками облікового запису в розділі "Account\Manage" *@
+
+@* Цей рядок коду використовує директиву @inject, щоб внедрити SignInManager для класу IdentityUser. 
+    SignInManager є сервісом для управління входом користувача (входом у систему).
+*@
+@inject SignInManager<IdentityUser> SignInManager
+@{
+    /*Цей блок коду визначає змінну hasExternalLogins, яка вказує, чи є у користувача зовнішні облікові 
+    записи(наприклад, з Facebook, Google тощо).Використовується асинхронний метод 
+    GetExternalAuthenticationSchemesAsync(), який отримує зовнішні схеми аутентифікації.*/
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+<ul class="nav nav-pills flex-column">
+    @* Створює елемент списку для переходу на сторінку профілю. @ManageNavPages.IndexNavClass(ViewContext) 
+    визначає клас для активного стану на основі поточного контексту відображення. *@
+    <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profile</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Password</a></li>
+    @* Ця умова вставляє <li> елемент для зовнішніх облікових записів, якщо hasExternalLogins є true. 
+        Це дозволяє динамічно додавати або вилучати пункт меню зовнішніх облікових записів в залежності 
+        від їх наявності. *@
+    @if (hasExternalLogins)
+    {
+        <li id="external-logins" class="nav-item"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">External logins</a></li>
+    }
+    
+    <li class="nav-item"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Two-factor authentication</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Personal data</a></li>
+    @* Цей рядок створює посилання на сторінку "My Order". *@
+    <li class="nav-item"><a class="nav-link" href="/UserOrder/UserOrders">My Order</a></li>
+</ul>

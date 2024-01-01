@@ -1,0 +1,111 @@
+﻿@*визначення моделі для цієї сторінки*@
+@model BookDisplayModel
+@{
+
+}
+@*Створення блоку <div> з класом "my-2" (відступ зверху і знизу), що визначає контейнер для 
+    елементів форми.*@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Ліва частина: Фільтр -->
+        <div class="col-md-3 mt-4 text-center">
+            <div class="my-2">
+                <form asp-action="Index" class="form-inline">
+                    <div class="col-md-auto">
+                        <label for="genreId" class="visually-hidden">Genres</label>
+                        <select class="form-select" id="genreId" name="genreId">
+                            <option value="">Select Genre</option>
+                            @foreach (var genre in Model.Genres)
+                            {
+                                <option value="@genre.Id" selected="@(genre.Id == Model.GenreId)">@genre.GenreName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-md-auto mt-2">
+                        <label for="sterm" class="visually-hidden">Search by title</label>
+                        <div class="input-group">
+                            <div class="input-group-text"></div>
+                            <input type="text" class="form-control" value="@Model.STerm" id="sterm" name="sterm" placeholder="Search by title">
+                        </div>
+                    </div>
+                    <div class="col-md-auto mt-2 text-center">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-dark">Reset</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Права частина: Список книг -->
+        <div class="col-md-9">
+            <div class="w-100 mt-4 d-flex flex-wrap ">
+                @*Це цикл foreach, який проходить через кожен об'єкт книги у моделі (Model.Books). *@
+                @foreach (var book in Model.Books)
+                {
+                    @*Цей елемент <div> відповідає за створення карточки книги. Має клас "card" для стилізації
+                та додаткові стилі ("mx-3" для відступу по горизонталі та "mb-5" для відступу вниз), а
+                також задає фіксовану ширину карточки ("width: 16rem;").*@
+                    <div class="card mx-3 mb-5" style="width: 16rem;">
+                        @*Це розгалуження (if-else), яке перевіряє, чи є у книги зображення. Якщо book.Image
+                    порожнє чи рівне null, то використовується зображення "NoImage.png", інакше використовується
+                    зображення, вказане в book.Image. Обидва варіанти рендеряться у вигляді <img>.*@
+                        <img style="width:100%;height:250px" src="/images/@(string.IsNullOrEmpty(book.Image) ? "NoImage.png" : book.Image)" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            @*Виводить заголовок карточки з ім'ям книги (@book.BookName).*@
+                            <h5 class="card-title">@book.BookName</h5>
+                            @*Створює абзац тексту, що містить інформацію про книгу, таку як жанр, автор та ціна.*@
+                            <p class="card-text">
+                                <b>Genre: </b>@book.GenreName <br />
+                                <b>Author: </b>@book.AuthorName <br />
+                                <b>Price: </b>@book.Price
+                            </p>
+                            @*Створює кнопку "Add to cart" з атрибутом onclick, який викликає JavaScript-функцію add(),
+                        передаючи ідентифікатор книги @book.Id.*@
+                            <button type="button" onclick="add(@book.Id)" class="btn btn-primary">Add to cart</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Ця конструкція використовується для вставки скриптів JavaScript в сторінку. Всі скрипти, визначені 
+всередині цього блоку, будуть включені в розділ <script> на сторінці, де викликається цей блок.*@
+@section Scripts{
+    <script>
+        // Ця функція має асинхронну природу і відповідає за додавання товару до кошика.Вона отримує bookId в якості параметра.
+        async function add(bookId) {
+            //Цей рядок отримує елемент DOM з ідентифікатором "username". Це пов'язано з інформацією 
+            // про користувача або його ідентифікацією.
+             var usernameEl = document.getElementById("username");
+            //Це перевірка, чи існує елемент з ідентифікатором "username". Якщо ні, то користувача 
+            // перенаправлять на сторінку входу в систему
+        if(usernameEl==null){
+            window.location.href = "/Identity/Account/Login";
+        }
+            try {
+                //Здійснює асинхронний запит на сервер, використовуючи fetch(). У цьому випадку, 
+                // відправляється запит на додавання товару до кошика з ідентифікатором bookId.
+                var response = await fetch(`/Cart/AddItem?bookId=${bookId}`);
+                //Перевіряє, чи відповідь сервера має статус 200 (OK). Якщо так, то 
+                // виконується наступний блок коду.
+                if (response.status == 200) {
+                    //Розпаковує тіло відповіді у форматі JSON та зберігає його в змінну result.
+                    var result = await response.json();
+                    //Отримує елемент DOM з ідентифікатором "cartCount".
+                    var cartCountEl = document.getElementById("cartCount");
+                    //Змінює вміст елементу "cartCount" на значення, яке повернулося з сервера.
+                    cartCountEl.innerHTML = result;
+                    //Змінює URL сторінки, перенаправляючи користувача до елементу з ідентифікатором "cartCount" на сторінці.
+                    window.location.href = "#cartCount";
+                }
+            }
+            //Обробляє помилки, які можуть виникнути в блоку try, і виводить їх у 
+            // консоль для подальшого аналізу.
+            catch (err) {
+                console.log(err);
+            }
+        }
+    </script>
+}
